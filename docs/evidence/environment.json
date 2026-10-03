@@ -1,0 +1,15 @@
+{
+  "verified_at": "2026-10-03T16:54:42.446392+03:00",
+  "host": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "host_arch": "arm64",
+  "docker_context": "desktop-linux",
+  "engine_os": "linux",
+  "engine_arch": "aarch64",
+  "engine_operating_system": "Docker Desktop",
+  "engine_version": "29.6.1",
+  "vm_ubuntu_24_04_run": "not verified",
+  "vscode_path": "/Applications/Visual Studio Code.app",
+  "wokwi_extension_installed": true,
+  "wokwi_run": "not verified",
+  "license": "user reports existing license; not inspected or activated"
+}
