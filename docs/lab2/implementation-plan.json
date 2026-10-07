@@ -1,0 +1,18 @@
+{
+  "project": "ShelfWatch",
+  "base": "fe3aadaedff0123d944c0c31e1410512558d4840",
+  "stages": [
+    "pinout and contracts",
+    "portable MPU driver",
+    "board and nonblocking scheduler",
+    "calibration and filtering",
+    "mode event rules",
+    "UART commands",
+    "boundary and failure tests",
+    "coverage and CI",
+    "real captures and measurements",
+    "report"
+  ],
+  "state": "implementation in progress",
+  "screenshots": "real execution, no cursor, no macOS window buttons"
+}

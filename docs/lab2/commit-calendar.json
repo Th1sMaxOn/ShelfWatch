@@ -1,0 +1,70 @@
+{
+  "student": "Пашко Максим Ігорович",
+  "project": "ShelfWatch",
+  "labs": [
+    2
+  ],
+  "state": "planned, not applied",
+  "commits": [
+    {
+      "stage": 1,
+      "lab": 2,
+      "author_date": "2026-10-07T12:45:45+03:00",
+      "committer_date": "2026-10-07T12:45:45+03:00"
+    },
+    {
+      "stage": 2,
+      "lab": 2,
+      "author_date": "2026-10-07T12:55:40+03:00",
+      "committer_date": "2026-10-07T12:55:40+03:00"
+    },
+    {
+      "stage": 3,
+      "lab": 2,
+      "author_date": "2026-10-08T06:23:00+03:00",
+      "committer_date": "2026-10-08T06:23:00+03:00"
+    },
+    {
+      "stage": 4,
+      "lab": 2,
+      "author_date": "2026-10-08T10:34:46+03:00",
+      "committer_date": "2026-10-08T10:34:46+03:00"
+    },
+    {
+      "stage": 5,
+      "lab": 2,
+      "author_date": "2026-10-09T12:45:55+03:00",
+      "committer_date": "2026-10-09T12:45:55+03:00"
+    },
+    {
+      "stage": 6,
+      "lab": 2,
+      "author_date": "2026-10-11T08:02:14+03:00",
+      "committer_date": "2026-10-11T08:02:14+03:00"
+    },
+    {
+      "stage": 7,
+      "lab": 2,
+      "author_date": "2026-10-13T23:01:41+03:00",
+      "committer_date": "2026-10-13T23:01:41+03:00"
+    },
+    {
+      "stage": 8,
+      "lab": 2,
+      "author_date": "2026-10-14T03:20:38+03:00",
+      "committer_date": "2026-10-14T03:20:38+03:00"
+    },
+    {
+      "stage": 9,
+      "lab": 2,
+      "author_date": "2026-10-14T13:39:48+03:00",
+      "committer_date": "2026-10-14T13:39:48+03:00"
+    },
+    {
+      "stage": 10,
+      "lab": 2,
+      "author_date": "2026-10-14T20:14:22+03:00",
+      "committer_date": "2026-10-14T20:14:22+03:00"
+    }
+  ]
+}
