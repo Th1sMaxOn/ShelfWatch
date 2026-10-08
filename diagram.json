@@ -1,19 +1,212 @@
 {
   "version": 1,
-  "author": "template",
+  "author": "ShelfWatch",
   "editor": "wokwi",
   "parts": [
     {
       "type": "board-st-nucleo-c031c6",
       "id": "nucleo",
-      "top": 0,
-      "left": 0,
+      "top": 30,
+      "left": 20,
       "attrs": {}
+    },
+    {
+      "type": "wokwi-mpu6050",
+      "id": "imu",
+      "top": -100,
+      "left": 290,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-pir-motion-sensor",
+      "id": "pir",
+      "top": 200,
+      "left": 290,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-photoresistor-sensor",
+      "id": "ldr",
+      "top": 60,
+      "left": 290,
+      "attrs": {
+        "lux": "10"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": -160,
+      "left": 150,
+      "attrs": {
+        "value": "4700"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r2",
+      "top": -130,
+      "left": 150,
+      "attrs": {
+        "value": "4700"
+      }
+    },
+    {
+      "type": "wokwi-logic-analyzer",
+      "id": "logic",
+      "top": -100,
+      "left": 520,
+      "attrs": {
+        "channelNames": "SCL,SDA,UART_TX,PIR,ADC_MARK,LED",
+        "bufferSize": "10000000"
+      }
     }
   ],
   "connections": [
-    ["$serialMonitor:TX", "nucleo:PA3", "", []],
-    ["$serialMonitor:RX", "nucleo:PA2", "", []]
+    [
+      "$serialMonitor:TX",
+      "nucleo:PA3",
+      "",
+      []
+    ],
+    [
+      "$serialMonitor:RX",
+      "nucleo:PA2",
+      "",
+      []
+    ],
+    [
+      "nucleo:3V3",
+      "imu:VCC",
+      "red",
+      []
+    ],
+    [
+      "nucleo:GND.1",
+      "imu:GND",
+      "black",
+      []
+    ],
+    [
+      "nucleo:3V3",
+      "pir:VCC",
+      "red",
+      []
+    ],
+    [
+      "nucleo:GND.1",
+      "pir:GND",
+      "black",
+      []
+    ],
+    [
+      "nucleo:3V3",
+      "ldr:VCC",
+      "red",
+      []
+    ],
+    [
+      "nucleo:GND.1",
+      "ldr:GND",
+      "black",
+      []
+    ],
+    [
+      "nucleo:GND.1",
+      "imu:AD0",
+      "black",
+      []
+    ],
+    [
+      "nucleo:PB8",
+      "imu:SCL",
+      "green",
+      []
+    ],
+    [
+      "nucleo:PB9",
+      "imu:SDA",
+      "blue",
+      []
+    ],
+    [
+      "nucleo:3V3",
+      "r1:1",
+      "red",
+      []
+    ],
+    [
+      "r1:2",
+      "imu:SCL",
+      "green",
+      []
+    ],
+    [
+      "nucleo:3V3",
+      "r2:1",
+      "red",
+      []
+    ],
+    [
+      "r2:2",
+      "imu:SDA",
+      "blue",
+      []
+    ],
+    [
+      "pir:OUT",
+      "nucleo:PA1",
+      "orange",
+      []
+    ],
+    [
+      "ldr:AO",
+      "nucleo:PA0",
+      "purple",
+      []
+    ],
+    [
+      "nucleo:PB8",
+      "logic:D0",
+      "green",
+      []
+    ],
+    [
+      "nucleo:PB9",
+      "logic:D1",
+      "green",
+      []
+    ],
+    [
+      "nucleo:PA2",
+      "logic:D2",
+      "green",
+      []
+    ],
+    [
+      "nucleo:PA1",
+      "logic:D3",
+      "green",
+      []
+    ],
+    [
+      "nucleo:PA4",
+      "logic:D4",
+      "green",
+      []
+    ],
+    [
+      "nucleo:PA5",
+      "logic:D5",
+      "green",
+      []
+    ],
+    [
+      "nucleo:GND.1",
+      "logic:GND",
+      "black",
+      []
+    ]
   ],
   "dependencies": {}
 }

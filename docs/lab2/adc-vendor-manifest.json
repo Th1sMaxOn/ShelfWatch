@@ -1,0 +1,11 @@
+{
+  "upstream": "STMicroelectronics STM32C0 HAL",
+  "matching_existing_common_hal_files": true,
+  "files": {
+    "Inc/stm32c0xx_hal_adc.h": "e5b224524a68cc351b17c4e9e75bedda100bab51d518b70991be25194e506c71",
+    "Inc/stm32c0xx_hal_adc_ex.h": "397b123ed9a6d421ced0509a92c004311a90d75bda7b38d006a66006f3c1a4be",
+    "Inc/stm32c0xx_ll_adc.h": "f52c18763a4e26ccd7409bd01df7344e32511f9ce1f003c741d84198b408a11c",
+    "Src/stm32c0xx_hal_adc.c": "7ba45f1faee644d77d43dabc11b73e62bb9d3e8133f9fd56a53d452dea6b134b",
+    "Src/stm32c0xx_hal_adc_ex.c": "fa7a81b9d0e2195d1f70f2adf64a601a640470183d6472ac9e10b14cf9488ecd"
+  }
+}
