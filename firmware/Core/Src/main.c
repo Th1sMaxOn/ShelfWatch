@@ -24,6 +24,7 @@
 
 #include <stdio.h>
 #include "runtime.h"
+#include "board.h"
 
 /* USER CODE END Includes */
 
@@ -66,12 +67,7 @@ static void MX_USART2_UART_Init(void);
 
 int __io_putchar(int ch)
 {
-  uint8_t byte = (uint8_t)ch;
-  if (HAL_UART_Transmit(&huart2, &byte, 1, HAL_MAX_DELAY) != HAL_OK)
-  {
-    return EOF;
-  }
-  return ch;
+  return board_put_char(ch);
 }
 
 /* USER CODE END 0 */

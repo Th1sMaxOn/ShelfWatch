@@ -22,7 +22,7 @@ TARGET = firmware
 # debug build?
 DEBUG = 1
 # optimization
-OPT = -Og
+OPT = -Os
 
 
 #######################################
@@ -39,6 +39,9 @@ C_SOURCES =  \
 Devices/mpu6050.c \
 Platform/board.c \
 Platform/runtime.c \
+App/app.c \
+App/events.c \
+App/commands.c \
 Drivers/STM32C0xx_HAL_Driver/Src/stm32c0xx_hal_adc.c \
 Drivers/STM32C0xx_HAL_Driver/Src/stm32c0xx_hal_adc_ex.c \
 Core/Src/main.c \
@@ -122,6 +125,7 @@ C_INCLUDES =  \
 -ICore/Inc \
 -IDevices \
 -IPlatform \
+-IApp \
 -IDrivers/STM32C0xx_HAL_Driver/Inc \
 -IDrivers/STM32C0xx_HAL_Driver/Inc/Legacy \
 -IDrivers/CMSIS/Device/ST/STM32C0xx/Include \

@@ -10,4 +10,6 @@ bool board_motion(void);
 void board_led(bool on);
 int board_get_char(void);
 bool board_rx_overflow(void);
+int board_put_char(int value);
+bool board_tx_overflow(void);
 #endif

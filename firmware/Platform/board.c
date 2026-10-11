@@ -7,6 +7,9 @@ static bool adc_ready;
 static volatile uint16_t rx_head, rx_tail;
 static volatile bool rx_overflow;
 static uint8_t rx_byte, rx_ring[256];
+static volatile uint16_t tx_head, tx_tail;
+static volatile bool tx_busy, tx_overflow;
+static uint8_t tx_ring[2048];
 static uint32_t bus_started;
 static bool bus_timeout;
 
@@ -84,6 +87,36 @@ static BusResult bus_write(void *context, uint8_t address, uint8_t reg, const ui
 }
 SensorBus board_sensor_bus(void) { return (SensorBus){NULL, bus_read, bus_write}; }
 
+static void transmit_next(void) {
+    if (tx_head == tx_tail) { tx_busy = false; return; }
+    tx_busy = HAL_UART_Transmit_IT(&huart2, &tx_ring[tx_tail], 1) == HAL_OK;
+    if (!tx_busy) tx_overflow = true;
+}
+int board_put_char(int value) {
+    uint32_t mask = __get_PRIMASK();
+    __disable_irq();
+    uint16_t next = (uint16_t)((tx_head + 1u) & 2047u);
+    if (next == tx_tail) {
+        tx_overflow = true;
+        if (!mask) __enable_irq();
+        return -1;
+    }
+    tx_ring[tx_head] = (uint8_t)value; tx_head = next;
+    if (!tx_busy) transmit_next();
+    if (!mask) __enable_irq();
+    return value;
+}
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *uart) {
+    if (uart != &huart2) return;
+    tx_tail = (uint16_t)((tx_tail + 1u) & 2047u);
+    transmit_next();
+}
+bool board_tx_overflow(void) {
+    uint32_t mask = __get_PRIMASK();
+    __disable_irq(); bool value = tx_overflow; tx_overflow = false;
+    if (!mask) __enable_irq();
+    return value;
+}
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *uart) {
     if (uart != &huart2) return;
     uint16_t next = (uint16_t)((rx_head + 1u) & 255u);
@@ -101,7 +134,10 @@ int board_get_char(void) {
     return value;
 }
 bool board_rx_overflow(void) {
-    __disable_irq(); bool value = rx_overflow; rx_overflow = false; __enable_irq(); return value;
+    uint32_t mask = __get_PRIMASK();
+    __disable_irq(); bool value = rx_overflow; rx_overflow = false;
+    if (!mask) __enable_irq();
+    return value;
 }
 bool board_motion(void) { return HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_SET; }
 void board_led(bool on) { HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, on ? GPIO_PIN_SET : GPIO_PIN_RESET); }
