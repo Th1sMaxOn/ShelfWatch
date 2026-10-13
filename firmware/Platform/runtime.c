@@ -91,7 +91,8 @@ void runtime_poll(void) {
         else { ready = false; last_retry = now; app_fault(&app, true, true, HAL_GetTick()); }
     }
     now = HAL_GetTick();
-    if ((uint32_t)(now - last_adc) >= ADC_PERIOD_MS) {
+    uint32_t adc_period = app.adc_fault ? 1000u : ADC_PERIOD_MS;
+    if ((uint32_t)(now - last_adc) >= adc_period) {
         last_adc = now;
         bool ok = board_read_light(&light);
         app_fault(&app, false, !ok, HAL_GetTick());

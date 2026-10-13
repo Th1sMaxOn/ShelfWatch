@@ -13,6 +13,9 @@ typedef struct {
     bool alarm, imu_fault, adc_fault, pir, calibrating, base_valid[2];
     bool light_ready, light_base_valid, impact_active, motion_active, light_active, motion_candidate, light_candidate;
     uint32_t motion_since, light_since, quiet_since;
+    uint32_t impact_last, motion_last;
+    bool impact_seen, motion_seen;
+    unsigned missing_notices;
     int32_t base[2][3], noise[2];
     int32_t cal_sum[3], cal_min[3], cal_max[3], cal_gyro_max;
     unsigned cal_count;

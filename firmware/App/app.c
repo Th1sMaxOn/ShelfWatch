@@ -1,5 +1,6 @@
 #include "app.h"
 #include <limits.h>
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -31,6 +32,7 @@ void app_fault(App *app,bool imu,bool fault,uint32_t now) {
     app_emit(app,imu?"IMU":"ADC",fault?"sensor_error":"sensor_recovered",fault?"ERROR":"INFO",0);
     if(imu && fault) {
         app->base_valid[0]=false;app->base_valid[1]=false;
+        app->missing_notices=0;
         app->impact_active=false;app->motion_active=false;app->motion_candidate=false;
     }
     if(!imu && fault) {
@@ -45,13 +47,16 @@ void app_fault(App *app,bool imu,bool fault,uint32_t now) {
 void app_imu(App *app,const ImuSample *sample,uint32_t now) {
     app->now=now;app->latest=*sample;
     if(app->calibrating) {
+        float speed_squared=0;
         for(unsigned axis=0;axis<3;++axis) {
             int32_t value=sample->accel_mg[axis];app->cal_sum[axis]+=value;
             if(value<app->cal_min[axis])app->cal_min[axis]=value;
             if(value>app->cal_max[axis])app->cal_max[axis]=value;
-            int32_t rotation=abs(sample->gyro_mdps[axis]);
-            if(rotation>app->cal_gyro_max)app->cal_gyro_max=rotation;
+            float rotation=(float)sample->gyro_mdps[axis];
+            speed_squared+=rotation*rotation;
         }
+        int32_t speed=(int32_t)sqrtf(speed_squared);
+        if(speed>app->cal_gyro_max)app->cal_gyro_max=speed;
         unsigned required=app->kind==LABWATCH?500:100;
         if(++app->cal_count<required)return;
         int32_t spread=0;

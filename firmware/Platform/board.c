@@ -4,6 +4,7 @@
 extern UART_HandleTypeDef huart2;
 static ADC_HandleTypeDef adc;
 static bool adc_ready;
+static bool initialize_adc(void);
 static volatile uint16_t rx_head, rx_tail;
 static volatile bool rx_overflow;
 static uint8_t rx_byte, rx_ring[256];
@@ -142,12 +143,14 @@ bool board_rx_overflow(void) {
 bool board_motion(void) { return HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_SET; }
 void board_led(bool on) { HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, on ? GPIO_PIN_SET : GPIO_PIN_RESET); }
 bool board_read_light(uint16_t *value) {
+    if (!adc_ready) adc_ready = initialize_adc();
     if (!adc_ready) return false;
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
     bool ok = HAL_ADC_Start(&adc) == HAL_OK && HAL_ADC_PollForConversion(&adc, 2) == HAL_OK;
     if (ok) *value = (uint16_t)HAL_ADC_GetValue(&adc);
     if (HAL_ADC_Stop(&adc) != HAL_OK) ok = false;
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
+    if (!ok) { (void)HAL_ADC_DeInit(&adc); adc_ready = false; }
     return ok;
 }
 void HAL_ADC_MspInit(ADC_HandleTypeDef *handle) {
@@ -163,6 +166,12 @@ void board_init(void) {
     gpio.Pin = GPIO_PIN_1; gpio.Mode = GPIO_MODE_INPUT; gpio.Pull = GPIO_PULLDOWN; HAL_GPIO_Init(GPIOA, &gpio);
     gpio.Pin = GPIO_PIN_4; gpio.Mode = GPIO_MODE_OUTPUT_PP; gpio.Pull = GPIO_NOPULL; HAL_GPIO_Init(GPIOA, &gpio);
     gpio.Pin = GPIO_PIN_0; gpio.Mode = GPIO_MODE_ANALOG; HAL_GPIO_Init(GPIOA, &gpio);
+    adc_ready = initialize_adc();
+    HAL_NVIC_SetPriority(USART2_IRQn, 2, 0); HAL_NVIC_EnableIRQ(USART2_IRQn);
+    (void)HAL_UART_Receive_IT(&huart2, &rx_byte, 1);
+}
+static bool initialize_adc(void) {
+    adc = (ADC_HandleTypeDef){0};
     adc.Instance = ADC1;
     adc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
     adc.Init.Resolution = ADC_RESOLUTION_12B; adc.Init.DataAlign = ADC_DATAALIGN_RIGHT;
@@ -178,6 +187,6 @@ void board_init(void) {
     channel.Channel = ADC_CHANNEL_0; channel.Rank = ADC_RANK_CHANNEL_NUMBER;
     channel.SamplingTime = ADC_SAMPLINGTIME_COMMON_1;
     if (adc_ready) adc_ready = HAL_ADC_ConfigChannel(&adc, &channel) == HAL_OK;
-    HAL_NVIC_SetPriority(USART2_IRQn, 2, 0); HAL_NVIC_EnableIRQ(USART2_IRQn);
-    (void)HAL_UART_Receive_IT(&huart2, &rx_byte, 1);
+    if (adc_ready) adc_ready = HAL_ADCEx_Calibration_Start(&adc) == HAL_OK;
+    return adc_ready;
 }

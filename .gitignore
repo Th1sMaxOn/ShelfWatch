@@ -2,3 +2,10 @@
 firmware/build/
 wokwi.vcd
 *.swp
+
+# Rebuilt host tests and coverage
+tests/build/
+*.dSYM/
+*.gcda
+*.gcno
+*.gcov

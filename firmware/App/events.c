@@ -17,23 +17,33 @@ static const char *mechanical_level(const App *app) {
 void events_imu(App *app) {
     unsigned slot=app->kind==LABWATCH&&app->mode==1?1:0;
     bool base=app->base_valid[slot];
-    int32_t difference[3],rotation=0;
+    int32_t difference[3],rotation=norm(app->latest.gyro_mdps);
     for(unsigned axis=0;axis<3;++axis) {
         difference[axis]=app->latest.accel_mg[axis]-app->base[slot][axis];
-        int32_t value=abs(app->latest.gyro_mdps[axis]);if(value>rotation)rotation=value;
+    }
+    if(!base && app->kind==LABWATCH && !(app->missing_notices&(1u<<slot))) {
+        app->missing_notices|=1u<<slot;
+        app_emit(app,"CAL","calibration_required","INFO",slot);
     }
     int32_t deviation=base?norm(difference):0;
     int32_t impact=app->kind==TOOLSAFE?abs(norm(app->latest.accel_mg)-norm(app->base[slot])):deviation;
     int32_t limit=app->impact_limit+(app->kind==LABWATCH?app->noise[slot]:0);
     if(base && app->kind!=EXPOGUARD) {
-        if(impact>=limit&&!app->impact_active) {
+        bool over=app->kind==SHELFWATCH?impact>=limit:impact>limit;
+        uint32_t repeat=app->kind==SHELFWATCH?500:0;
+        if(over&&!app->impact_active && (!app->impact_seen || (uint32_t)(app->now-app->impact_last)>=repeat)) {
             app->impact_active=true;
+            app->impact_seen=true;app->impact_last=app->now;
             app_emit(app,"IMU",app->kind==LABWATCH?"shock_candidate":"impact",mechanical_level(app),impact);
         } else if(impact<limit*5/8)app->impact_active=false;
     }
-    bool moving=rotation>=app->motion_limit;
+    bool moving=app->kind==SHELFWATCH?rotation>=app->motion_limit:rotation>app->motion_limit;
     uint32_t duration=app->kind==SHELFWATCH?200:app->kind==EXPOGUARD?20:0;
-    if(app->kind==EXPOGUARD)moving=moving||(base&&deviation>300);
+    if(app->kind==EXPOGUARD) {
+        int32_t gyro_limit=app->motion_active?app->motion_limit*2/3:app->motion_limit;
+        int32_t accel_limit=app->motion_active?200:300;
+        moving=rotation>gyro_limit||(base&&deviation>accel_limit);
+    }
     if(app->kind==LABWATCH) {
         if(!base)return;
         int64_t dot=0,a2=0,b2=0;
@@ -46,8 +56,11 @@ void events_imu(App *app) {
     if(!base && app->kind!=EXPOGUARD)moving=false;
     if(moving) {
         if(!app->motion_candidate){app->motion_candidate=true;app->motion_since=app->now;}
-        if(!app->motion_active && (uint32_t)(app->now-app->motion_since)>=duration) {
+        uint32_t repeat=app->kind==EXPOGUARD?1000:app->kind==SHELFWATCH?500:0;
+        if(!app->motion_active && (uint32_t)(app->now-app->motion_since)>=duration &&
+           (!app->motion_seen || (uint32_t)(app->now-app->motion_last)>=repeat)) {
             app->motion_active=true;
+            app->motion_seen=true;app->motion_last=app->now;
             const char *event=app->kind==LABWATCH?"instrument_motion":app->kind==TOOLSAFE?"body_motion":app->kind==SHELFWATCH?"rack_motion":app->mode==1?"authorized_motion":"model_motion";
             app_emit(app,"IMU",event,mechanical_level(app),app->kind==LABWATCH?deviation:rotation);
         }
@@ -79,7 +92,7 @@ void events_light(App *app) {
         if(app->light_active)app_emit(app,"ADC",app->kind==EXPOGUARD?"light_restored":"light_normal","INFO",app->light_mean);
         app->light_active=false;app->light_candidate=false;
     }
-    if(app->light_active && app->kind!=EXPOGUARD)app->quiet_since=app->now;
+    if(app->light_active && (app->kind==LABWATCH || app->kind==TOOLSAFE))app->quiet_since=app->now;
 }
 void events_pir(App *app) {
     static const char *const names[]={"operator_motion","approach","motion","visitor_motion"};

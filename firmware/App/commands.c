@@ -1,5 +1,6 @@
 #include "app.h"
 #include <limits.h>
+#include <stdio.h>
 #include <string.h>
 
 /* Fixed decimal units, up to three fractional digits. No floating parser. */
@@ -31,6 +32,8 @@ static bool bad(App *app, const char *event) {
 }
 bool app_command(App *app, const char *line, uint32_t now) {
     app->now = now;
+    if (app->kind == TOOLSAFE && !strcmp(line, "issue")) return app_command(app, "mode issue", now);
+    if (app->kind == TOOLSAFE && !strcmp(line, "guard")) return app_command(app, "mode guard", now);
     if (!strcmp(line, "status")) {
         app_emit(app, "CMD", "status", "INFO", app->alarm);
         return true;
@@ -44,9 +47,10 @@ bool app_command(App *app, const char *line, uint32_t now) {
     }
     if (!strcmp(line, "ack")) {
         unsigned slot = app->kind == LABWATCH && app->mode == 1 ? 1 : 0;
+        bool light_alarm = app->kind == LABWATCH || app->kind == TOOLSAFE;
         if (app->imu_fault || app->adc_fault || !app->base_valid[slot] || !app->light_ready ||
-            app->calibrating || app->impact_active || app->motion_active || app->light_active ||
-            app->motion_candidate || app->light_candidate ||
+            app->calibrating || app->impact_active || app->motion_active ||
+            app->motion_candidate || (light_alarm && (app->light_active || app->light_candidate)) ||
             (uint32_t)(now - app->quiet_since) < 2000u) return bad(app, "ack_denied");
         app->alarm = false;
         app_emit(app, "CMD", "acknowledged", "INFO", 0);
@@ -65,7 +69,7 @@ bool app_command(App *app, const char *line, uint32_t now) {
                      (app->kind == SHELFWATCH && next == 2) ||
                      (app->kind == EXPOGUARD && next == 2);
         if (guard && (!app->base_valid[0] || app->imu_fault || app->adc_fault ||
-                      !app->light_ready || app->calibrating)) return bad(app, "guard_not_ready");
+                      !app->light_ready || app->calibrating)) return bad(app, "calibration_required");
         if (app->mode == next) { app_emit(app, "CMD", "mode_unchanged", "INFO", next); return true; }
         if (app->calibrating) {
             app->calibrating = false;
@@ -73,11 +77,16 @@ bool app_command(App *app, const char *line, uint32_t now) {
         }
         if (app->kind == LABWATCH && app->mode == 2) {
             app->base_valid[0] = false; app->base_valid[1] = false;
+            app->missing_notices = 0;
         }
+        unsigned previous = app->mode;
+        const char *previous_name = app_mode_name(app);
         app->mode = next;
         app->motion_candidate = false; app->light_candidate = false;
-        app_emit(app, "CMD", "mode_changed", "INFO", next);
-        if (guard && (app->impact_active || app->motion_active || app->light_active))
+        char event[64];
+        snprintf(event, sizeof(event), "mode_%s_to_%s", previous_name, app_mode_name(app));
+        app_emit(app, "CMD", event, "INFO", previous);
+        if (guard && (app->impact_active || app->motion_active || (app->kind == TOOLSAFE && app->light_active)))
             app_emit(app, "MODE", "active_on_guard_entry", "ALARM", 0);
         if (app->kind == SHELFWATCH && next == 2 && app->pir)
             app_emit(app, "PIR", "motion_on_arm", "ALARM", 1);
@@ -99,5 +108,5 @@ bool app_command(App *app, const char *line, uint32_t now) {
         app_emit(app, "CMD", "threshold_changed", "INFO", value);
         return true;
     }
-    return bad(app, "unknown_command");
+    return bad(app, "command_error");
 }
