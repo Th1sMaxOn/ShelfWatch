@@ -12,7 +12,6 @@ static volatile uint16_t tx_head, tx_tail;
 static volatile bool tx_busy, tx_overflow;
 static uint8_t tx_ring[2048];
 static uint32_t bus_started;
-static bool bus_timeout;
 
 static void delay_us(uint32_t us) {
     uint32_t remaining = us * (SystemCoreClock / 1000000u);
@@ -25,66 +24,67 @@ static void delay_us(uint32_t us) {
         previous = current;
     }
 }
-static void scl(bool high) { HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, high ? GPIO_PIN_SET : GPIO_PIN_RESET); }
-static void sda(bool high) { HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, high ? GPIO_PIN_SET : GPIO_PIN_RESET); }
-static bool clock_high(void) {
-    scl(true);
-    while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) != GPIO_PIN_SET) {
-        if ((uint32_t)(HAL_GetTick() - bus_started) >= 10u) { bus_timeout = true; return false; }
+static BusResult wait_i2c(uint32_t flag) {
+    for (;;) {
+        uint32_t status = I2C1->ISR;
+        if (status & I2C_ISR_NACKF) return BUS_NACK;
+        if (status & (I2C_ISR_BERR | I2C_ISR_ARLO | I2C_ISR_OVR)) return BUS_ERROR;
+        if (status & flag) return BUS_OK;
+        if ((uint32_t)(HAL_GetTick() - bus_started) >= 10u) return BUS_TIMEOUT;
     }
-    delay_us(5);
-    return true;
 }
-static bool start(void) {
-    sda(true);
-    if (!clock_high()) return false;
-    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9) != GPIO_PIN_SET) return false;
-    sda(false); delay_us(5); scl(false); delay_us(5);
-    return true;
+static void clear_i2c(void) {
+    I2C1->ICR = I2C_ICR_STOPCF | I2C_ICR_NACKCF | I2C_ICR_BERRCF | I2C_ICR_ARLOCF | I2C_ICR_OVRCF;
 }
-static void stop(void) {
-    scl(false); sda(false); delay_us(5);
-    (void)clock_high(); sda(true); delay_us(5);
-}
-static bool send_byte(uint8_t byte) {
-    for (unsigned bit = 0; bit < 8; ++bit) {
-        sda((byte & 0x80u) != 0); delay_us(5);
-        if (!clock_high()) return false;
-        scl(false); byte <<= 1;
+static BusResult finish_i2c(BusResult result) {
+    if (result != BUS_OK || (I2C1->ISR & I2C_ISR_BUSY)) {
+        I2C1->CR2 |= I2C_CR2_STOP;
+        I2C1->CR1 &= ~I2C_CR1_PE;
+        I2C1->CR1 |= I2C_CR1_PE;
     }
-    sda(true); delay_us(5);
-    if (!clock_high()) return false;
-    bool ack = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9) == GPIO_PIN_RESET;
-    scl(false); delay_us(5);
-    return ack;
+    clear_i2c();
+    I2C1->CR2 = 0;
+    return result;
 }
-static bool receive_byte(uint8_t *byte, bool last) {
-    *byte = 0; sda(true);
-    for (unsigned bit = 0; bit < 8; ++bit) {
-        delay_us(5);
-        if (!clock_high()) return false;
-        *byte = (uint8_t)((*byte << 1) | (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9) == GPIO_PIN_SET));
-        scl(false);
+/* AUTOEND retains the MPU pointer across STOP. Whole CR2 writes avoid partial
+ * model transactions; a TX settle interval is bounded by the same deadline. */
+static BusResult write_phase(uint8_t address, const uint8_t *data, size_t length) {
+    clear_i2c();
+    I2C1->CR2 = ((uint32_t)address << 1) | ((uint32_t)length << 16) | I2C_CR2_AUTOEND | I2C_CR2_START;
+    delay_us(120);
+    for (size_t index = 0; index < length; ++index) {
+        BusResult result = wait_i2c(I2C_ISR_TXIS);
+        if (result != BUS_OK) return result;
+        I2C1->TXDR = data[index];
+        delay_us(120);
     }
-    sda(last); delay_us(5);
-    if (!clock_high()) return false;
-    scl(false); sda(true); delay_us(5);
-    return true;
+    BusResult result = wait_i2c(I2C_ISR_STOPF);
+    if (result == BUS_OK) { clear_i2c(); delay_us(120); }
+    return result;
 }
 static BusResult bus_read(void *context, uint8_t address, uint8_t reg, uint8_t *data, size_t length) {
-    (void)context; bus_started = HAL_GetTick(); bus_timeout = false;
-    bool ok = start() && send_byte((uint8_t)(address << 1)) && send_byte(reg);
-    if (ok) ok = start() && send_byte((uint8_t)((address << 1) | 1u));
-    for (size_t index = 0; ok && index < length; ++index) ok = receive_byte(&data[index], index + 1 == length);
-    stop();
-    return bus_timeout ? BUS_TIMEOUT : ok ? BUS_OK : BUS_NACK;
+    (void)context;
+    if (!data || !length || length > 255 || address > 127) return BUS_ERROR;
+    bus_started = HAL_GetTick();
+    BusResult result = write_phase(address, &reg, 1);
+    if (result != BUS_OK) return finish_i2c(result);
+    I2C1->CR2 = ((uint32_t)address << 1) | ((uint32_t)length << 16) | I2C_CR2_RD_WRN | I2C_CR2_AUTOEND | I2C_CR2_START;
+    for (size_t index = 0; index < length; ++index) {
+        result = wait_i2c(I2C_ISR_RXNE);
+        if (result != BUS_OK) return finish_i2c(result);
+        data[index] = (uint8_t)I2C1->RXDR;
+    }
+    result = wait_i2c(I2C_ISR_STOPF);
+    if (result == BUS_OK) delay_us(120);
+    return finish_i2c(result);
 }
 static BusResult bus_write(void *context, uint8_t address, uint8_t reg, const uint8_t *data, size_t length) {
-    (void)context; bus_started = HAL_GetTick(); bus_timeout = false;
-    bool ok = start() && send_byte((uint8_t)(address << 1)) && send_byte(reg);
-    for (size_t index = 0; ok && index < length; ++index) ok = send_byte(data[index]);
-    stop();
-    return bus_timeout ? BUS_TIMEOUT : ok ? BUS_OK : BUS_NACK;
+    (void)context;
+    if (!data || !length || length > 254 || address > 127) return BUS_ERROR;
+    uint8_t bytes[255]; bytes[0] = reg;
+    for (size_t index = 0; index < length; ++index) bytes[index + 1] = data[index];
+    bus_started = HAL_GetTick();
+    return finish_i2c(write_phase(address, bytes, length + 1));
 }
 SensorBus board_sensor_bus(void) { return (SensorBus){NULL, bus_read, bus_write}; }
 
@@ -159,10 +159,6 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *handle) {
 void board_init(void) {
     GPIO_InitTypeDef gpio = {0};
     __HAL_RCC_GPIOA_CLK_ENABLE(); __HAL_RCC_GPIOB_CLK_ENABLE();
-    __HAL_RCC_I2C1_CLK_DISABLE();
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8 | GPIO_PIN_9, GPIO_PIN_SET);
-    gpio.Pin = GPIO_PIN_8 | GPIO_PIN_9; gpio.Mode = GPIO_MODE_OUTPUT_OD;
-    gpio.Pull = GPIO_PULLUP; gpio.Speed = GPIO_SPEED_FREQ_HIGH; HAL_GPIO_Init(GPIOB, &gpio);
     gpio.Pin = GPIO_PIN_1; gpio.Mode = GPIO_MODE_INPUT; gpio.Pull = GPIO_PULLDOWN; HAL_GPIO_Init(GPIOA, &gpio);
     gpio.Pin = GPIO_PIN_4; gpio.Mode = GPIO_MODE_OUTPUT_PP; gpio.Pull = GPIO_NOPULL; HAL_GPIO_Init(GPIOA, &gpio);
     gpio.Pin = GPIO_PIN_0; gpio.Mode = GPIO_MODE_ANALOG; HAL_GPIO_Init(GPIOA, &gpio);

@@ -1,0 +1,26 @@
+{
+  "captured_on": "2026-10-15",
+  "firmware_hex_sha256": "d77c247e783dfbe5fc6d055531ffa492f297f9fa06a2efec72d0974ce2ab8b42",
+  "own_source_sha256": {
+    "firmware/App/app.h": "e64860f2bbcdde989d40a80e2160878a662be5966200f84d0a06d61b8883038b",
+    "firmware/App/events.c": "03f98ff3eb40c8c6000a11e43c02795dcb06a1bb3b6685552cd83151d4b26f00",
+    "firmware/App/commands.c": "43bc6726bd40415d4dcee3a03bedea96cef5c52a490b72a3141945b9b9dde283",
+    "firmware/App/app.c": "96ca9760899e3ab902ef12ee12f9511ca766615e709f246b34b86a1fb87f0cc7",
+    "firmware/Devices/mpu6050.h": "8b18f78e0b995050f63512d5ece23f17c5b8f98f000e3c65d6df125e474982fa",
+    "firmware/Devices/mpu6050.c": "45a34bb790cdc186dd68a2303a19904b97b26603490832404d56b55839093a90",
+    "firmware/Platform/runtime.c": "a57a032df61bf45f20a5ac46f298ad95f9c259af8e0473f8220bf8523e155eef",
+    "firmware/Platform/profile.h": "0ac182544f8cefa4bc996ad4024c026eadbcc1fd7a8f8dc7c0d9b71d724284d8",
+    "firmware/Platform/board.c": "df422e0454dc45d90e482f032c7b38f012735ade5d6077c13b294aa8a9d89224",
+    "firmware/Platform/runtime.h": "d1a84aa6d3513bbb3bc4c6c74b126fede67e765c97c95887ca7b9ba65c873647",
+    "firmware/Platform/board.h": "cc7d7257d6789a6e29743f17ddb1f238309ded644515e70ceb920fc841c3d03f",
+    "firmware/Core/Src/system_stm32c0xx.c": "494f06811540fce3fa6f6cb7b9226cad70ba510c7f49ac114872ee9a9a5065ef",
+    "firmware/Core/Src/stm32c0xx_it.c": "98e9eb2071e3876f88ab6118712157b388db0f394a3ff09b66482bc0dedfb6e4",
+    "firmware/Core/Src/syscalls.c": "ab00c3df1417d6249b5c9c13c4e7b926f1fec9cd10961861d3f3c8d34983b913",
+    "firmware/Core/Src/main.c": "f1efbcf1aecdbf9776177d31feafc90684bdfae778ebc3ca8ae50405dd74b7cc",
+    "firmware/Core/Src/stm32c0xx_hal_msp.c": "de53fb412596c3893f187ee37c5b352b7943fa6bc69267ad9a87343d52dba586",
+    "firmware/Core/Src/sysmem.c": "67f3125e749700183d510a14cb979e5acee05ebe29d1972eceaa55aa4ac25366",
+    "firmware/Core/Inc/main.h": "c0eea391917a104bac9851c058843d11606a05c44ec62471f97c2d95ee03425c",
+    "firmware/Core/Inc/stm32c0xx_hal_conf.h": "fdd9e651f42d0948ab349f50e9945a711b2215c48978c617e27554292df8d6f5",
+    "firmware/Core/Inc/stm32c0xx_it.h": "d426a290394c8de983ed8742fdca8d7162b07ded3b5172b2806a367154ebad38"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "source": "acceptance.vcd",
+  "source_sha256": "ecae31f95488934f2b9338a12dfd136a53f0a3ef14071a06e438aa710769adb5",
+  "start_ns": 9833800,
+  "end_ns": 9948800,
+  "output_sha256": "9b73026ade7f334fa7fac56875c127c90412c9b927825cf1dad6589e09ab3a42"
+}

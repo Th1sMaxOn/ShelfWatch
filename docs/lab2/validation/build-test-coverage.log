@@ -1,0 +1,160 @@
+docker build -t shelfwatch-build:lab2 docker
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 443B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/ubuntu:22.04@sha256:5ec03bb3441e8b0bf3b4f9cd4629a1ae763010dc3035bb8da3ae6cf026486401
+#2 DONE 0.1s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/3] FROM docker.io/library/ubuntu:22.04@sha256:5ec03bb3441e8b0bf3b4f9cd4629a1ae763010dc3035bb8da3ae6cf026486401
+#4 resolve docker.io/library/ubuntu:22.04@sha256:5ec03bb3441e8b0bf3b4f9cd4629a1ae763010dc3035bb8da3ae6cf026486401 0.0s done
+#4 DONE 0.0s
+
+#5 [2/3] RUN apt-get update && apt-get install -y --no-install-recommends     gcc     libc6-dev     python3     make     gcc-arm-none-eabi     binutils-arm-none-eabi     libnewlib-arm-none-eabi     ca-certificates     && rm -rf /var/lib/apt/lists/*
+#5 CACHED
+
+#6 [3/3] WORKDIR /workspace
+#6 CACHED
+
+#7 exporting to image
+#7 exporting layers done
+#7 exporting manifest sha256:c4ee5937cae819fcc2365cba1a4b0a6f5ebb01bb5a8c8a711b02489cb1782204 done
+#7 exporting config sha256:14edf2a803832a078fea8dad60a5aba4f31a3acfcb4ce5dabd0c21b29e41c61a done
+#7 exporting attestation manifest sha256:16784139f0815ce057fe35412c5fdfa8fd53924b9e86788ef415eecb07162bcd 0.0s done
+#7 exporting manifest list sha256:9c6cc88e08ebf5d4f37b9c3b1f80076c8b0e325072dd7927769c1e2c0926e62d 0.0s done
+#7 naming to docker.io/library/shelfwatch-build:lab2
+#7 naming to docker.io/library/shelfwatch-build:lab2 done
+#7 unpacking to docker.io/library/shelfwatch-build:lab2 done
+#7 DONE 0.1s
+docker run --rm -v "/Users/pliffdax/Projects/university/Study/People/Пашко Максим Ігорович/2026-Fall/SP/Lab01/Work/ShelfWatch:/workspace" -w /workspace \
+		--user "501:20" shelfwatch-build:lab2 \
+		make -C firmware all
+make: Entering directory '/workspace/firmware'
+make: Nothing to be done for 'all'.
+make: Leaving directory '/workspace/firmware'
+docker run --rm -v "/Users/pliffdax/Projects/university/Study/People/Пашко Максим Ігорович/2026-Fall/SP/Lab01/Work/ShelfWatch:/workspace" -w /workspace --user "501:20" shelfwatch-build:lab2 make test sanitize
+python3 tools/check_project.py
+Portable dependency boundaries, scheduler structure and unchanged ADC vendor sources passed
+make -C tests test
+make[1]: Entering directory '/workspace/tests'
+cc -I../firmware/Devices -I../firmware/App -I../firmware/Platform -Ifakes -std=c11 -O0 -g -Wall -Wextra -Werror test_mpu.c ../firmware/Devices/mpu6050.c -lm -o "build/Linux-aarch64/test_mpu"
+cc -I../firmware/Devices -I../firmware/App -I../firmware/Platform -Ifakes -std=c11 -O0 -g -Wall -Wextra -Werror test_calibration.c ../firmware/App/app.c ../firmware/App/events.c ../firmware/App/commands.c -lm -o "build/Linux-aarch64/test_calibration"
+cc -I../firmware/Devices -I../firmware/App -I../firmware/Platform -Ifakes -std=c11 -O0 -g -Wall -Wextra -Werror test_events.c ../firmware/App/app.c ../firmware/App/events.c ../firmware/App/commands.c -lm -o "build/Linux-aarch64/test_events"
+cc -I../firmware/Devices -I../firmware/App -I../firmware/Platform -Ifakes -std=c11 -O0 -g -Wall -Wextra -Werror test_acceptance.c ../firmware/App/app.c ../firmware/App/events.c ../firmware/App/commands.c -lm -o "build/Linux-aarch64/test_acceptance"
+cc -I../firmware/Devices -I../firmware/App -I../firmware/Platform -Ifakes -std=c11 -O0 -g -Wall -Wextra -Werror -DRUNTIME_TEST_PRINTF test_runtime.c ../firmware/App/app.c ../firmware/App/events.c ../firmware/App/commands.c ../firmware/Devices/mpu6050.c ../firmware/Platform/runtime.c -lm -o "build/Linux-aarch64/test_runtime"
+MPU6050: identity, initialization order, units, signed limits and bus failures passed
+Calibration: exact sample count, noisy rejection, mode baselines and fault interruption passed
+Events: profile modes, PIR edges, independent alarms, hysteresis and sustained motion passed
+ToolSafe command names and strict physical thresholds
+ExpoGuard darkness does not prevent mechanical acknowledgement
+Vector gyro norm and per-project event rearming interval
+Missing LabWatch baseline emits one explicit notice
+Calibration rejects vector speed above the limit
+Threshold parsing is atomic for invalid and boundary values
+Acceptance boundary and recovery checks passed
+Runtime fake: commands, simultaneous sensors, NACK/retry, independent ADC/PIR, recovery and line rejection passed
+make[1]: Leaving directory '/workspace/tests'
+make -C tests sanitize
+make[1]: Entering directory '/workspace/tests'
+make test BUILD=build/Linux-aarch64/sanitize CFLAGS='-std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-omit-frame-pointer'
+make[2]: Entering directory '/workspace/tests'
+cc -I../firmware/Devices -I../firmware/App -I../firmware/Platform -Ifakes -std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-omit-frame-pointer test_mpu.c ../firmware/Devices/mpu6050.c -lm -o "build/Linux-aarch64/sanitize/test_mpu"
+cc -I../firmware/Devices -I../firmware/App -I../firmware/Platform -Ifakes -std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-omit-frame-pointer test_calibration.c ../firmware/App/app.c ../firmware/App/events.c ../firmware/App/commands.c -lm -o "build/Linux-aarch64/sanitize/test_calibration"
+cc -I../firmware/Devices -I../firmware/App -I../firmware/Platform -Ifakes -std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-omit-frame-pointer test_events.c ../firmware/App/app.c ../firmware/App/events.c ../firmware/App/commands.c -lm -o "build/Linux-aarch64/sanitize/test_events"
+cc -I../firmware/Devices -I../firmware/App -I../firmware/Platform -Ifakes -std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-omit-frame-pointer test_acceptance.c ../firmware/App/app.c ../firmware/App/events.c ../firmware/App/commands.c -lm -o "build/Linux-aarch64/sanitize/test_acceptance"
+cc -I../firmware/Devices -I../firmware/App -I../firmware/Platform -Ifakes -std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-omit-frame-pointer -DRUNTIME_TEST_PRINTF test_runtime.c ../firmware/App/app.c ../firmware/App/events.c ../firmware/App/commands.c ../firmware/Devices/mpu6050.c ../firmware/Platform/runtime.c -lm -o "build/Linux-aarch64/sanitize/test_runtime"
+MPU6050: identity, initialization order, units, signed limits and bus failures passed
+Calibration: exact sample count, noisy rejection, mode baselines and fault interruption passed
+Events: profile modes, PIR edges, independent alarms, hysteresis and sustained motion passed
+ToolSafe command names and strict physical thresholds
+ExpoGuard darkness does not prevent mechanical acknowledgement
+Vector gyro norm and per-project event rearming interval
+Missing LabWatch baseline emits one explicit notice
+Calibration rejects vector speed above the limit
+Threshold parsing is atomic for invalid and boundary values
+Acceptance boundary and recovery checks passed
+Runtime fake: commands, simultaneous sensors, NACK/retry, independent ADC/PIR, recovery and line rejection passed
+make[2]: Leaving directory '/workspace/tests'
+make[1]: Leaving directory '/workspace/tests'
+docker run --rm -v "/Users/pliffdax/Projects/university/Study/People/Пашко Максим Ігорович/2026-Fall/SP/Lab01/Work/ShelfWatch:/workspace" -w /workspace --user "501:20" shelfwatch-build:lab2 python3 tools/coverage.py
+MPU6050: identity, initialization order, units, signed limits and bus failures passed
+Calibration: exact sample count, noisy rejection, mode baselines and fault interruption passed
+Events: profile modes, PIR edges, independent alarms, hysteresis and sustained motion passed
+ToolSafe command names and strict physical thresholds
+ExpoGuard darkness does not prevent mechanical acknowledgement
+Vector gyro norm and per-project event rearming interval
+Missing LabWatch baseline emits one explicit notice
+Calibration rejects vector speed above the limit
+Threshold parsing is atomic for invalid and boundary values
+Runtime fake: commands, simultaneous sensors, NACK/retry, independent ADC/PIR, recovery and line rejection passed
+Acceptance boundary and recovery checks passed
+{
+  "scope": "Portable App and Devices only; Board/HAL are excluded",
+  "files": [
+    {
+      "source": "firmware/App/app.c",
+      "lines": 74,
+      "executed": 74,
+      "branches": 90,
+      "taken": 88,
+      "uncovered_lines": []
+    },
+    {
+      "source": "firmware/App/commands.c",
+      "lines": 89,
+      "executed": 77,
+      "branches": 162,
+      "taken": 101,
+      "uncovered_lines": [
+        41,
+        42,
+        43,
+        44,
+        45,
+        74,
+        75,
+        78,
+        79,
+        92,
+        94,
+        113
+      ]
+    },
+    {
+      "source": "firmware/App/events.c",
+      "lines": 77,
+      "executed": 76,
+      "branches": 169,
+      "taken": 132,
+      "uncovered_lines": [
+        15
+      ]
+    },
+    {
+      "source": "firmware/Devices/mpu6050.c",
+      "lines": 23,
+      "executed": 23,
+      "branches": 14,
+      "taken": 14,
+      "uncovered_lines": []
+    }
+  ],
+  "totals": {
+    "lines": 263,
+    "executed": 250,
+    "branches": 435,
+    "taken": 335,
+    "line_percent": 95.06,
+    "branch_taken_percent": 77.01
+  },
+  "gate": {
+    "line_percent": 85,
+    "branch_taken_percent": 70
+  }
+}

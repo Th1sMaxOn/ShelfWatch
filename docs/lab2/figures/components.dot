@@ -1,0 +1,19 @@
+digraph G {
+ graph [rankdir=TB, bgcolor="white", pad=0.15, nodesep=0.35, ranksep=0.45, label="ShelfWatch: component dependencies", labelloc=t];
+ node [shape=box, style="rounded,filled", fillcolor="#f6f8fa", fontname="Arial", fontsize=13, margin="0.12,0.08"];
+ edge [fontname="Arial", fontsize=10, color="#374151"];
+ core [label="Core\nmain / clock / IRQ"];
+ runtime [label="Platform runtime\nscheduler / UART parser", fillcolor="#e7eef9"];
+ device [label="Devices MPU6050\nID / registers / signed units", fillcolor="#edf4e7"];
+ app [label="App\ncalibration / modes / events", fillcolor="#edf4e7"];
+ board [label="Platform board\nADC / PIR / UART queues\nI2C1 AUTOEND adapter", fillcolor="#e7eef9"];
+ vendor [label="ST HAL + CMSIS\nunchanged vendor sources"];
+ tests [label="Host tests\nfake bus / fake board / clock", fillcolor="#fff4dc"];
+ core -> runtime;
+ core -> board [label="IRQ"];
+ runtime -> device [label="read sample"];
+ runtime -> app [label="sample / time / command"];
+ device -> board [label="SensorBus callbacks"];
+ board -> vendor [label="GPIO / ADC / UART"];
+ tests -> device [style=dashed]; tests -> app [style=dashed]; tests -> runtime [style=dashed];
+}

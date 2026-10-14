@@ -1,0 +1,64 @@
+{
+  "scope": "Portable App and Devices only; Board/HAL are excluded",
+  "files": [
+    {
+      "source": "firmware/App/app.c",
+      "lines": 74,
+      "executed": 74,
+      "branches": 90,
+      "taken": 88,
+      "uncovered_lines": []
+    },
+    {
+      "source": "firmware/App/commands.c",
+      "lines": 89,
+      "executed": 77,
+      "branches": 162,
+      "taken": 101,
+      "uncovered_lines": [
+        41,
+        42,
+        43,
+        44,
+        45,
+        74,
+        75,
+        78,
+        79,
+        92,
+        94,
+        113
+      ]
+    },
+    {
+      "source": "firmware/App/events.c",
+      "lines": 77,
+      "executed": 76,
+      "branches": 169,
+      "taken": 132,
+      "uncovered_lines": [
+        15
+      ]
+    },
+    {
+      "source": "firmware/Devices/mpu6050.c",
+      "lines": 23,
+      "executed": 23,
+      "branches": 14,
+      "taken": 14,
+      "uncovered_lines": []
+    }
+  ],
+  "totals": {
+    "lines": 263,
+    "executed": 250,
+    "branches": 435,
+    "taken": 335,
+    "line_percent": 95.06,
+    "branch_taken_percent": 77.01
+  },
+  "gate": {
+    "line_percent": 85,
+    "branch_taken_percent": 70
+  }
+}

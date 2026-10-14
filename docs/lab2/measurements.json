@@ -1,0 +1,376 @@
+{
+  "source": "acceptance.vcd",
+  "sha256": "ecae31f95488934f2b9338a12dfd136a53f0a3ef14071a06e438aa710769adb5",
+  "end_ns": 54909301925,
+  "scl_period_median_ns": 10000.0,
+  "adc_period_median_ns": 49993700.0,
+  "adc_marker_width_median_ns": 65225,
+  "PIR_pulses": [
+    {
+      "start_ns": 41583443500,
+      "width_ns": 5000000025
+    }
+  ],
+  "whoami": [
+    {
+      "start_ns": 9838800,
+      "bytes": [
+        208,
+        117
+      ],
+      "acks": [
+        true,
+        true
+      ],
+      "byte_end_ns": [
+        9928800,
+        10086250
+      ],
+      "end_ns": 10101250,
+      "end": "STOP"
+    },
+    {
+      "start_ns": 10311525,
+      "bytes": [
+        209,
+        104
+      ],
+      "acks": [
+        true,
+        false
+      ],
+      "byte_end_ns": [
+        10401525,
+        10491525
+      ],
+      "end_ns": 10506525,
+      "end": "STOP"
+    }
+  ],
+  "first_burst": [
+    {
+      "start_ns": 17722550,
+      "bytes": [
+        208,
+        59
+      ],
+      "acks": [
+        true,
+        true
+      ],
+      "byte_end_ns": [
+        17812550,
+        17949700
+      ],
+      "end_ns": 17964700,
+      "end": "STOP"
+    },
+    {
+      "start_ns": 18167225,
+      "bytes": [
+        209,
+        0,
+        0,
+        0,
+        0,
+        64,
+        0,
+        239,
+        92,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "acks": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false
+      ],
+      "byte_end_ns": [
+        18257225,
+        18347225,
+        18437225,
+        18527225,
+        18617225,
+        18707225,
+        18797225,
+        18887225,
+        18977225,
+        19067225,
+        19157225,
+        19247225,
+        19337225,
+        19427225,
+        19517225
+      ],
+      "end_ns": 19532225,
+      "end": "STOP"
+    }
+  ],
+  "motion_burst": {
+    "start_ns": 41587081300,
+    "bytes": [
+      209,
+      127,
+      255,
+      0,
+      0,
+      64,
+      0,
+      239,
+      92,
+      127,
+      238,
+      0,
+      0,
+      0,
+      0
+    ],
+    "acks": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false
+    ],
+    "byte_end_ns": [
+      41587171300,
+      41587261300,
+      41587351300,
+      41587441300,
+      41587531300,
+      41587621300,
+      41587711300,
+      41587801300,
+      41587891300,
+      41587981300,
+      41588071300,
+      41588161300,
+      41588251300,
+      41588341300,
+      41588431300
+    ],
+    "end_ns": 41588446300,
+    "end": "STOP"
+  },
+  "nack": {
+    "start_ns": 20316098350,
+    "bytes": [
+      210
+    ],
+    "acks": [
+      false
+    ],
+    "byte_end_ns": [
+      20316188350
+    ],
+    "end_ns": 20316203350,
+    "end": "STOP"
+  },
+  "events": [
+    {
+      "time_ns": 4961475,
+      "text": "seq=1 time_ms=0 mode=disarmed src=CAL event=calibrating level=INFO value=0"
+    },
+    {
+      "time_ns": 33556125,
+      "text": "seq=2 time_ms=8 mode=disarmed src=IMU event=whoami_0x68 level=INFO value=104"
+    },
+    {
+      "time_ns": 1032996000,
+      "text": "seq=3 time_ms=1008 mode=disarmed src=CAL event=calibration_ready level=INFO value=0"
+    },
+    {
+      "time_ns": 15308282150,
+      "text": "seq=4 time_ms=15299 mode=disarmed src=IMU event=selftest_pass level=INFO value=0"
+    },
+    {
+      "time_ns": 16313924700,
+      "text": "seq=5 time_ms=16310 mode=disarmed src=CMD event=threshold_changed level=INFO value=600"
+    },
+    {
+      "time_ns": 17304169800,
+      "text": "seq=6 time_ms=17300 mode=disarmed src=CMD event=invalid_threshold level=ERROR value=0"
+    },
+    {
+      "time_ns": 18303752000,
+      "text": "seq=7 time_ms=18300 mode=inspection src=CMD event=mode_disarmed_to_inspection level=INFO value=0"
+    },
+    {
+      "time_ns": 19313645200,
+      "text": "seq=8 time_ms=19310 mode=armed src=CMD event=mode_inspection_to_armed level=INFO value=1"
+    },
+    {
+      "time_ns": 20310681425,
+      "text": "seq=9 time_ms=20307 mode=armed src=IMU event=sensor_error level=ERROR value=0"
+    },
+    {
+      "time_ns": 20323095400,
+      "text": "seq=10 time_ms=20307 mode=armed src=CMD event=address_changed level=INFO value=105"
+    },
+    {
+      "time_ns": 22302337175,
+      "text": "seq=11 time_ms=22299 mode=armed src=CMD event=status level=INFO value=0"
+    },
+    {
+      "time_ns": 23294582025,
+      "text": "seq=12 time_ms=23291 mode=armed src=CMD event=address_changed level=INFO value=104"
+    },
+    {
+      "time_ns": 23307779175,
+      "text": "seq=13 time_ms=23291 mode=armed src=IMU event=sensor_recovered level=INFO value=0"
+    },
+    {
+      "time_ns": 23320818725,
+      "text": "seq=14 time_ms=23291 mode=armed src=CAL event=calibrating level=INFO value=0"
+    },
+    {
+      "time_ns": 23333074200,
+      "text": "seq=15 time_ms=23291 mode=armed src=IMU event=whoami_0x68 level=INFO value=104"
+    },
+    {
+      "time_ns": 24300782500,
+      "text": "seq=16 time_ms=24298 mode=armed src=CAL event=calibration_ready level=INFO value=0"
+    },
+    {
+      "time_ns": 26302734850,
+      "text": "seq=17 time_ms=26300 mode=armed src=CMD event=mode_unchanged level=INFO value=2"
+    },
+    {
+      "time_ns": 27302302275,
+      "text": "seq=18 time_ms=27299 mode=armed src=CMD event=status level=INFO value=0"
+    },
+    {
+      "time_ns": 41585020950,
+      "text": "seq=19 time_ms=41582 mode=armed src=GPIO event=motion level=ALARM value=1"
+    },
+    {
+      "time_ns": 41596804875,
+      "text": "seq=20 time_ms=41588 mode=armed src=IMU event=impact level=ALARM value=1999"
+    },
+    {
+      "time_ns": 41717403200,
+      "text": "seq=21 time_ms=41715 mode=armed src=ADC event=light_change level=INFO value=1384"
+    },
+    {
+      "time_ns": 41792828375,
+      "text": "seq=22 time_ms=41790 mode=armed src=IMU event=rack_motion level=ALARM value=250000"
+    }
+  ],
+  "fault_events": [
+    {
+      "time_ns": 4961475,
+      "text": "seq=1 time_ms=0 mode=disarmed src=CAL event=calibrating level=INFO value=0"
+    },
+    {
+      "time_ns": 33556125,
+      "text": "seq=2 time_ms=8 mode=disarmed src=IMU event=whoami_0x68 level=INFO value=104"
+    },
+    {
+      "time_ns": 1032996000,
+      "text": "seq=3 time_ms=1008 mode=disarmed src=CAL event=calibration_ready level=INFO value=0"
+    },
+    {
+      "time_ns": 15308282150,
+      "text": "seq=4 time_ms=15299 mode=disarmed src=IMU event=selftest_pass level=INFO value=0"
+    },
+    {
+      "time_ns": 16313924700,
+      "text": "seq=5 time_ms=16310 mode=disarmed src=CMD event=threshold_changed level=INFO value=600"
+    },
+    {
+      "time_ns": 17304169800,
+      "text": "seq=6 time_ms=17300 mode=disarmed src=CMD event=invalid_threshold level=ERROR value=0"
+    },
+    {
+      "time_ns": 18303752000,
+      "text": "seq=7 time_ms=18300 mode=inspection src=CMD event=mode_disarmed_to_inspection level=INFO value=0"
+    },
+    {
+      "time_ns": 19313645200,
+      "text": "seq=8 time_ms=19310 mode=armed src=CMD event=mode_inspection_to_armed level=INFO value=1"
+    },
+    {
+      "time_ns": 20310681425,
+      "text": "seq=9 time_ms=20307 mode=armed src=IMU event=sensor_error level=ERROR value=0"
+    },
+    {
+      "time_ns": 20323095400,
+      "text": "seq=10 time_ms=20307 mode=armed src=CMD event=address_changed level=INFO value=105"
+    },
+    {
+      "time_ns": 22302337175,
+      "text": "seq=11 time_ms=22299 mode=armed src=CMD event=status level=INFO value=0"
+    },
+    {
+      "time_ns": 23294582025,
+      "text": "seq=12 time_ms=23291 mode=armed src=CMD event=address_changed level=INFO value=104"
+    },
+    {
+      "time_ns": 23307779175,
+      "text": "seq=13 time_ms=23291 mode=armed src=IMU event=sensor_recovered level=INFO value=0"
+    },
+    {
+      "time_ns": 23320818725,
+      "text": "seq=14 time_ms=23291 mode=armed src=CAL event=calibrating level=INFO value=0"
+    },
+    {
+      "time_ns": 23333074200,
+      "text": "seq=15 time_ms=23291 mode=armed src=IMU event=whoami_0x68 level=INFO value=104"
+    },
+    {
+      "time_ns": 24300782500,
+      "text": "seq=16 time_ms=24298 mode=armed src=CAL event=calibration_ready level=INFO value=0"
+    },
+    {
+      "time_ns": 26302734850,
+      "text": "seq=17 time_ms=26300 mode=armed src=CMD event=mode_unchanged level=INFO value=2"
+    },
+    {
+      "time_ns": 27302302275,
+      "text": "seq=18 time_ms=27299 mode=armed src=CMD event=status level=INFO value=0"
+    },
+    {
+      "time_ns": 41585020950,
+      "text": "seq=19 time_ms=41582 mode=armed src=GPIO event=motion level=ALARM value=1"
+    },
+    {
+      "time_ns": 41596804875,
+      "text": "seq=20 time_ms=41588 mode=armed src=IMU event=impact level=ALARM value=1999"
+    },
+    {
+      "time_ns": 41717403200,
+      "text": "seq=21 time_ms=41715 mode=armed src=ADC event=light_change level=INFO value=1384"
+    },
+    {
+      "time_ns": 41792828375,
+      "text": "seq=22 time_ms=41790 mode=armed src=IMU event=rack_motion level=ALARM value=250000"
+    }
+  ],
+  "imu_burst_period_median_ns": 10000050
+}

@@ -7,7 +7,7 @@ APP = ../firmware/App/app.c ../firmware/App/events.c ../firmware/App/commands.c
 DEVICE = ../firmware/Devices/mpu6050.c
 RUNTIME = ../firmware/Platform/runtime.c
 SUITES = test_mpu test_calibration test_events test_acceptance test_runtime
-HEADERS = $(wildcard ../firmware/App/*.h ../firmware/Devices/*.h ../firmware/Platform/*.h fakes/*.h)
+HEADERS = $(wildcard ../firmware/App/*.h ../firmware/Devices/*.h ../firmware/Platform/*.h fakes/*.h fixtures/*.h)
 
 .PHONY: test clean sanitize
 test: $(SUITES:%=$(BUILD)/%)

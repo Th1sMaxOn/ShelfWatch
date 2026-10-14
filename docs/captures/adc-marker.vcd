@@ -1,0 +1,25 @@
+$version Observed VCD window $end
+$timescale 1ns $end
+$scope module logic $end
+$var wire 1 ! SCL $end
+$var wire 1 " SDA $end
+$var wire 1 # UART_TX $end
+$var wire 1 $ PIR $end
+$var wire 1 % ADC_MARK $end
+$var wire 1 & LED $end
+$var wire 1 ' UART_RX $end
+$upscope $end
+$enddefinitions $end
+#0
+1!
+1"
+1#
+0$
+0%
+0&
+1'
+#10000
+1%
+#75225
+0%
+#110000
