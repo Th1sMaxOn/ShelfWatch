@@ -82,4 +82,5 @@ int main(void) {
     app.alarm = true; app.quiet_since = UINT32_MAX - 1000u;
     assert(app_command(&app, "ack", 999) && !app.alarm);
     puts("Acceptance boundary and recovery checks passed");
+    return 0;
 }

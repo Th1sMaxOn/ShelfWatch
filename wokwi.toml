@@ -3,3 +3,4 @@ version = 1
 firmware = 'firmware/build/firmware.hex'
 elf = 'firmware/build/firmware.elf'
 vcdFile = 'wokwi.vcd'
+rfc2217ServerPort = 4503

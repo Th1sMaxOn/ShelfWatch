@@ -25,4 +25,5 @@ int main(void) {
     App app;app_init(&app,LABWATCH,NULL,NULL);light(&app);app.mode=1;app_start_calibration(&app);samples(&app,500,100);
     assert(app.base_valid[1]&&!app.base_valid[0]);
     puts("Calibration: exact sample count, noisy rejection, mode baselines and fault interruption passed");
+    return 0;
 }

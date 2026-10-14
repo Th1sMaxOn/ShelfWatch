@@ -5,6 +5,12 @@
 #include "profile.h"
 #include <stdio.h>
 #include <string.h>
+#ifdef RUNTIME_TEST_PRINTF
+int runtime_test_printf(const char *, ...);
+#define runtime_printf runtime_test_printf
+#else
+#define runtime_printf printf
+#endif
 static Mpu6050 imu;
 static bool ready;
 static uint32_t last_imu, last_adc, last_status, last_retry;
@@ -18,7 +24,7 @@ static uint32_t tx_overflow_events;
 static void event(void *context, uint32_t sequence, uint32_t time,
                   const char *source, const char *name, const char *level, int32_t value) {
     const App *state = context;
-    printf("seq=%lu time_ms=%lu mode=%s src=%s event=%s level=%s value=%ld\r\n",
+    runtime_printf("seq=%lu time_ms=%lu mode=%s src=%s event=%s level=%s value=%ld\r\n",
            (unsigned long)sequence, (unsigned long)time, app_mode_name(state),
            source, name, level, (long)value);
 }
@@ -71,7 +77,7 @@ void runtime_init(void) {
     imu = (Mpu6050){board_sensor_bus(), 0x68};
     app_init(&app, PROJECT_KIND, event, &app);
     last_retry = HAL_GetTick() - 1000u;
-    printf("project=%s sensors=MPU6050,PIR,LDR units=mg,mdps,adc commands=status,selftest,calibrate,mode,ack\r\n", PROJECT_NAME);
+    runtime_printf("project=%s sensors=MPU6050,PIR,LDR units=mg,mdps,adc commands=status,selftest,calibrate,mode,ack\r\n", PROJECT_NAME);
 }
 void runtime_poll(void) {
     uint32_t now = HAL_GetTick();
@@ -101,7 +107,7 @@ void runtime_poll(void) {
     if (board_tx_overflow()) ++tx_overflow_events;
     if ((uint32_t)(now - last_status) >= 1000u) {
         last_status = now;
-        printf("time_ms=%lu mode=%s imu=%s ax_mg=%ld ay_mg=%ld az_mg=%ld gx_mdps=%ld gy_mdps=%ld gz_mdps=%ld light_raw=%u light_valid=%u pir=%u baseline=%u,%u cal=%u alarm=%u tx_overflow_events=%lu\r\n",
+        runtime_printf("time_ms=%lu mode=%s imu=%s ax_mg=%ld ay_mg=%ld az_mg=%ld gx_mdps=%ld gy_mdps=%ld gz_mdps=%ld light_raw=%u light_valid=%u pir=%u baseline=%u,%u cal=%u alarm=%u tx_overflow_events=%lu\r\n",
                (unsigned long)now, app_mode_name(&app), ready ? "valid" : "invalid",
                (long)app.latest.accel_mg[0], (long)app.latest.accel_mg[1], (long)app.latest.accel_mg[2],
                (long)app.latest.gyro_mdps[0], (long)app.latest.gyro_mdps[1], (long)app.latest.gyro_mdps[2],

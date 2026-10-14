@@ -32,4 +32,5 @@ int main(void) {
     for(unsigned i=0;i<15;i++)app_light(&app,2000,200+i*50);
     assert(!strcmp(log.last,"light_change")&&log.alarms==1);
     puts("Events: profile modes, PIR edges, independent alarms, hysteresis and sustained motion passed");
+    return 0;
 }

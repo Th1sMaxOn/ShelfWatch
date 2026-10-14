@@ -1,0 +1,19 @@
+name: ShelfWatch verification
+on:
+  push:
+    branches: [main, feature/lab-2]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  firmware-and-host:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - name: ARM firmware
+        run: make build
+      - name: Portable and runtime tests with sanitizers
+        run: make test-linux
+      - name: GCC portable coverage
+        run: make coverage

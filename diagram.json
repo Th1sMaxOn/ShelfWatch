@@ -15,14 +15,18 @@
       "id": "imu",
       "top": -100,
       "left": 290,
-      "attrs": {}
+      "attrs": {
+        "accelZ": "1"
+      }
     },
     {
       "type": "wokwi-pir-motion-sensor",
       "id": "pir",
       "top": 200,
       "left": 290,
-      "attrs": {}
+      "attrs": {
+        "delayTime": "5"
+      }
     },
     {
       "type": "wokwi-photoresistor-sensor",
@@ -57,8 +61,9 @@
       "top": -100,
       "left": 520,
       "attrs": {
-        "channelNames": "SCL,SDA,UART_TX,PIR,ADC_MARK,LED",
-        "bufferSize": "10000000"
+        "channelNames": "SCL,SDA,UART_TX,PIR,ADC_MARK,LED,UART_RX",
+        "bufferSize": "4000000",
+        "triggerMode": "off"
       }
     }
   ],
@@ -76,7 +81,7 @@
       []
     ],
     [
-      "nucleo:3V3",
+      "nucleo:3V3.1",
       "imu:VCC",
       "red",
       []
@@ -88,7 +93,7 @@
       []
     ],
     [
-      "nucleo:3V3",
+      "nucleo:5V.1",
       "pir:VCC",
       "red",
       []
@@ -100,7 +105,7 @@
       []
     ],
     [
-      "nucleo:3V3",
+      "nucleo:3V3.1",
       "ldr:VCC",
       "red",
       []
@@ -130,7 +135,7 @@
       []
     ],
     [
-      "nucleo:3V3",
+      "nucleo:3V3.1",
       "r1:1",
       "red",
       []
@@ -142,7 +147,7 @@
       []
     ],
     [
-      "nucleo:3V3",
+      "nucleo:3V3.1",
       "r2:1",
       "red",
       []
@@ -205,6 +210,12 @@
       "nucleo:GND.1",
       "logic:GND",
       "black",
+      []
+    ],
+    [
+      "nucleo:PA3",
+      "logic:D6",
+      "gray",
       []
     ]
   ],

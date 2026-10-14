@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-typedef struct { BusResult result; uint8_t id; unsigned writes, reads; } Fake;
+typedef struct { BusResult result; uint8_t id; unsigned writes, reads, fail_write; } Fake;
 static BusResult read_bus(void *context, uint8_t address, uint8_t reg, uint8_t *data, size_t size) {
     Fake *fake = context;
     assert(address == 0x68);
@@ -20,10 +20,11 @@ static BusResult write_bus(void *context, uint8_t address, uint8_t reg, const ui
     assert(address == 0x68 && size == 1);
     assert(reg == registers[fake->writes] && data[0] == values[fake->writes]);
     fake->writes++;
+    if (fake->fail_write == fake->writes) return BUS_TIMEOUT;
     return fake->result;
 }
 int main(void) {
-    Fake fake = {BUS_OK, 0x68, 0, 0};
+    Fake fake = {.result = BUS_OK, .id = 0x68};
     Mpu6050 device = {{&fake, read_bus, write_bus}, 0x68};
     assert(mpu6050_init(&device) == BUS_OK && fake.writes == 5);
     ImuSample sample;
@@ -43,5 +44,11 @@ int main(void) {
     mpu6050_decode(limits, &sample);
     assert(sample.accel_mg[0] == -2000 && sample.accel_mg[1] == 1999);
     assert(sample.gyro_mdps[0] == -250137 && sample.gyro_mdps[1] == 250129);
+    for (unsigned index = 1; index <= 5; ++index) {
+        Fake failed = {.result = BUS_OK, .id = 0x68, .fail_write = index};
+        device.bus.context = &failed;
+        assert(mpu6050_init(&device) == BUS_TIMEOUT && failed.writes == index);
+    }
     puts("MPU6050: identity, initialization order, units, signed limits and bus failures passed");
+    return 0;
 }

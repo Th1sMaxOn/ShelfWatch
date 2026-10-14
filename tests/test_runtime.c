@@ -18,7 +18,7 @@ static unsigned probes;
 static unsigned failed_adc_attempts;
 static uint32_t probe_time[256];
 uint32_t HAL_GetTick(void) { return tick; }
-int printf(const char *format, ...) {
+int runtime_test_printf(const char *format, ...) {
     va_list args; va_start(args, format);
     int written = vsnprintf(output + output_size, sizeof(output) - output_size, format, args);
     va_end(args);
@@ -74,6 +74,7 @@ int main(void) {
     runtime_init(); run(1);
     if (PROJECT_KIND == LABWATCH || PROJECT_KIND == EXPOGUARD) send("calibrate\n");
     run(PROJECT_KIND == LABWATCH ? 11000 : 3000);
+    if (!strstr(output, "event=calibration_ready")) fwrite(output, 1, output_size, stderr);
     assert(strstr(output, "event=calibration_ready"));
     if (PROJECT_KIND == EXPOGUARD) send("mode guard\n");
     if (PROJECT_KIND == SHELFWATCH) send("mode armed\n");
@@ -113,4 +114,5 @@ int main(void) {
     send("status\r\n"); run(2); assert(occurrences("event=status") == status_before + 1);
     fail_bus = true; send("selftest\n"); run(2); assert(strstr(output, "event=selftest_failed"));
     fputs("Runtime fake: commands, simultaneous sensors, NACK/retry, independent ADC/PIR, recovery and line rejection passed\n", stderr);
+    return 0;
 }
