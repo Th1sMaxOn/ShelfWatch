@@ -1,40 +1,23 @@
 # ShelfWatch
 
-Нічний контроль складського стелажа. Власник: Пашко Максим Ігорович, група ІО-32.
+Інтегрований прототип спостереження: MPU6050, PIR, аналоговий LDR. Режими та трактування подій описано в [PRD](docs/PRD.md); жоден сигнал не встановлює особу чи намір людини.
 
-Середовище: Ubuntu 24.04, Docker, STM32 HAL, Wokwi. Форма B, симуляція Nucleo-C031C6. У ЛР1 використано готову прошивку SP-Boilerplate без змін: UART2, повідомлення `STM32C031C6 ready` та `tick`, блимання LED PA5. Датчики й правила охорони заплановані для ЛР2.
+[Звіт ЛР2](docs/lab2/report.pdf) · [Pinout](docs/pinout.md) · [Архітектура](docs/architecture.md) · [Власні захвати](docs/captures/README.md)
 
-## Збірка та симуляція
-
-З кореня проєкту:
+Середовище: Ubuntu 24.04, Docker, STM32 HAL, Wokwi. Відкрити корінь проєкту у VS Code, зібрати та виконати Wokwi: Start Simulator. Схема diagram.json; firmware.hex/elf у firmware/build. Базовий CubeMX .ioc описує Core; додаткові ADC/GPIO налаштовані в Platform/board.c.
 
 ```sh
-make clean
 make build
+make test
+make test-linux
+make coverage
+make sanitize
 ```
 
-Результати: `firmware/build/firmware.elf`, `firmware.hex`, `firmware.bin`. `wokwi.toml` посилається на HEX та ELF у цій папці. Відкрийте цю копію в VS Code, натисніть F1 і виберіть `Wokwi: Start Simulator`. UART має показати стартове повідомлення та послідовні `tick`; LED має перемикатися приблизно щосекунди. Старт/рестарт симулятора завантажує актуальні файли й відкриває UART Logger. Окремих цілей `make flash` і `make monitor` у шаблоні немає.
+UART 115200 8N1, команди `selftest`, `status`, `calibrate`, `mode`, `ack`, `imuaddr 0x68`, `imuaddr 0x69`. Після початкового фону очікуються IMU valid, Z 1000 mg, ADC valid, PIR 0. Калібрування робити у спокої. Відмова адреси не зупиняє інші сенсори.
 
-## Документація
+На власних записах 15.10.2026: SCL 100 кГц, період IMU 10.000 мс, період ADC 49.994 мс. Coverage App+Devices 95.06% рядків, 77.01% гілок; Board/HAL не входять. [CI інтеграційного коміту](https://github.com/Th1sMaxOn/ShelfWatch/actions/runs/38726351840).
 
-- [Словник предметної області](CONTEXT.md).
-- [PRD і тести вимог](docs/PRD.md).
-- [Компоненти та інтерфейси](docs/hardware-components.md).
-- [План ЛР1 та ЛР2, вимоги до здачі](docs/lab-plan.md).
-- [Перевірки та реальні докази](docs/validation.md).
-- [Передача і перевірка в Ubuntu VM](docs/vm-handoff.md).
-- [Оригінальний README шаблону](docs/boilerplate-readme.md).
+VCD/SR/PVS і SHA256 зберігаються у docs/captures; окремий `.origin.json` фіксує абсолютний offset кожного вікна. Повні VCD стиснені без втрат. Скриншоти у docs/lab2/figures походять із власного виконання Wokwi/PulseView. Для UART є також текстовий декод wire-uart.txt. Розрахунковий бюджет живлення та межі моделі відокремлено від вимірювань.
 
-## Перевірки
-
-Код UART/LED переглянуто. Дві чисті Docker-збірки на macOS arm64 з Linux arm64 Docker Engine успішні; SHA256 ELF/HEX/BIN збігаються. Логи збережено у `docs/evidence`. Це перевірка повторюваності на одному хості з тим самим образом, а не доказ збірки на довільному ноутбуці.
-
-Ubuntu VM, фактичний UART/LED у Wokwi й CubeMX-скриншоти ще потребують перевірки; PDF-звіт ще потребує оформлення. VS Code та Wokwi-розширення знайдено на Mac; користувач повідомив про наявну ліцензію, її дію не перевірено.
-
-`main` містить лише порожній початковий коміт, проєкт зберігається в `feature/lab-1`. Віддалений репозиторій ще не створено, гілки не опубліковано. PR у `main` створює користувач після завершення звіту й перевірок.
-
-## Межі теми
-
-Режим охорони вмикає оператор явно. Темрява сама по собі не визначає ніч або заборону доступу. PIR означає рух поруч, LDR означає зміну світла, MPU6050 означає механічну подію. Дозволений обхід пригнічує тривогу від руху працівника, але не приховує удар стелажа. Система не встановлює особу, факт крадіжки чи причину удару.
-
-Прошивка походить зі SP-Boilerplate та [STM32 HAL прикладу Wokwi](https://github.com/wokwi/stm32-hello-wokwi). `LICENSE` і ліцензії ST/CMSIS збережено.
+ЛР2 передається гілкою feature/lab-2 і тегом lab2; pull request у main створюється окремо.
