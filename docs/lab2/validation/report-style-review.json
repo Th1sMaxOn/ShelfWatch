@@ -1,0 +1,9 @@
+{
+  "project": "ShelfWatch",
+  "pages": 15,
+  "tables": 4,
+  "grid_table_fragments": 4,
+  "all_header_footer_regions_empty": true,
+  "institutional_header_matches_reference": true,
+  "published_render_matches_reviewed_preview": true
+}
